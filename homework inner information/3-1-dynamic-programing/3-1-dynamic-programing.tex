@@ -1,0 +1,262 @@
+% 2-15-rb-tree.tex
+
+%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper, justified]{tufte-handout}
+
+\input{hw-preamble} % feel free to modify this file
+%%%%%%%%%%%%%%%%%%%%
+\title{第3-1讲: 动态规划}
+\me{赵超懿}{191870271}{}{}
+\date{\zhtoday} % or like 2019年9月13日
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism % always keep this line
+%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+  % \begin{center}{\fcolorbox{blue}{yellow!60}{\parbox{0.65\textwidth}{\large 
+  %   \begin{itemize}
+  %     \item 
+  %   \end{itemize}}}}
+  % \end{center}
+\end{abstract}
+%%%%%%%%%%%%%%%%%%%%
+\beginrequired
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 15.1-1]
+Show that equation (15.4) follows from equation (15.3) and the initial condition T(0)=1.
+\end{problem}
+
+\begin{solution}
+记$\sum\limits_{i=0}^{n}=S(n)$,\\
+$T(n)=1+\sum\limits_{i=0}^{n-1}T(i)\Leftrightarrow S(n)-S(n-1)=1+S(n-1)$，\\
+解得$S(n)=2^{n+1}-1\Rightarrow T(n)=2^n$.
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 15.1-3]
+Consider  a  modification  of  the  rod-cutting  problem  in  which,  in  addition  to  a price $p_i$ for each rod, each cut incurs a fixed cost of c. The revenue associated with a solution is now the sum of the prices of the pieces minus the costs of making the cuts. Give a dynamic-programming algorithm to solve this modified problem.
+\end{problem}
+
+\begin{solution}
+CUT-ROD(p,n)\\
+\hspace*{0.6 cm} r[0]=0;\\
+\hspace*{0.6 cm} for i=1 to n\\
+\hspace*{1.6 cm} q=p[j]\\
+\hspace*{1.6 cm} for j=1 to i-1\\
+\hspace*{2.6 cm} q=max(q,p[j]+r[i-j]-c)\\
+\hspace*{1.6 cm} r[i]=q\\
+\hspace*{0.6 cm} return r[n]\\
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 15.2-2]
+Give  a  recursive  algorithm  MATRIX-CHAIN-MULTIPLY(A,s,i,j) that  actually performs the optimal matrix-chain multiplication, given the sequence of matrices $<A1,A2,...,An_i>$,the stable computed by MAT R I X-CHAIN-ORDER, and the indices i and j. (The initial call would be MAT R I X-CHAIN-MULTIPLY(A,s,1,n).
+
+\end{problem}
+
+\begin{solution}
+MATRIX-CHAIN-MULTIPLY(A,s,i,j)\\
+\hspace*{0.6 cm} if i == j\\
+\hspace*{1.3 cm}     return $A_i$\\
+\hspace*{0.6 cm} if i == j-1\\
+\hspace*{1.3 cm}     return $A_i \times A_j$\\
+\hspace*{0.6 cm} return MATRIX-CHAIN-MULTIPLY(A,s,i,s[i,j])$\times$ MATRIX-CHAIN-MULTIPLY(A,s,s[i,j]+1,j)
+
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 15.2-4]
+Describe the subproblem graph for matrix-chain multiplication with an input chain of length n.  How many vertices does it have?  How many edges does it have, and which edges are they?
+\end{problem}
+
+\begin{solution}
+包含$C_n^2+n=\dfrac{n(n+1)}{2}$个顶点\\
+包含$\sum\limits_{i=1}^{n}\sum\limits_{i\leqslant j}^{n}2(j-i)=\dfrac{n(n-1)(n+1)}{3}$,对于每个顶点(i,j)$(i\leqslant j)$,都和$(i,k_1)(i\leqslant k_1 < j)$或$(k_2,j)(i < k_2 \leqslant j)$连接。
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 15.3-3]
+Consider a variant of the matrix-chain multiplication problem in which the goal is to parenthesize the sequence of matrices so as to maximize, rather than minimize,the number of scalar multiplications.  Does this problem exhibit optimal substructure?
+\end{problem}
+
+\begin{solution}
+具有最优子结构，对于每个划分，计算的次数及划分成的两部分的最大值之和加上最后乘起来的代价。最大计算量必然包括子问题的最大计算量。反证法即可证明：若最优解划分的子问题中有一个非最优解，则子问题使用最优解会得到更大的值，矛盾，故最优解包括子问题的最优解。
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 15.3-5]
+Suppose that in the rod-cutting problem of Section 15.1, we also had limit $l_i$ on the number of pieces of length i that we are allowed to produce, for i=1,2...,n.Show that the optimal-substructure  property described in Section 15.1 no longer holds.
+\end{problem}
+
+\begin{solution}
+反证法：假设仍然满足最优子结构。\\
+则一次划分后得到的两个子问题仍然是最优解，当两侧最优解中长度为k的数量超过$l_k$时，则必然有一侧不具有最优解，矛盾。故不满足最优解。
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 15.3-6]
+Imagine  that  you  wish  to  exchange  one  currency  for  another.   You  realize  that instead of directly exchanging one currency for another,  you might be better off making a series of trades through other currencies, winding up with the currency you want. Suppose that you can trade n different currencies, numbered 1;2;...;n,where you start with currency 1 and wish to wind up with currency n.You are given,  for each pair of currencies i and j, an exchange rate $r_{ij}$, meaning that if you start with d units of currency i, you can trade for $dr_{ij}$units of currency j.A sequence of trades may entail a commission, which depends on the number of trades you make. Let $c_k$ be the commission that you are charged when you make k trades. Show that, if $c_k$=0 for all k=1;2;...;n, then the problem of finding the best sequence of exchanges from currency 1 to currency n exhibits optimal sub-structure. Then show that if commissions $c_k$ are arbitrary values, then the problem of finding the best sequence of exchanges from currency 1 to currency n does not necessarily exhibit optimal substructure.
+\end{problem}
+
+\begin{solution}
+一.\\
+当$\forall k\in N, c_k=0$时，将问题变为从一号货币通过一次兑换兑换为m号货币再从m号货币通若干次次兑换为n号货币，当问题具有最优解时，假设第一次兑换为m号货币，从m号货币兑换为n号货币必然也是最优解。最优解结构为solve(i)，指从i号货币通过j次兑换兑换为n号货币。,$solve(1)=max_{i\neq 1}(solve(i)+dr_{1,i})$\\
+二.\\
+当$c_k$为任意值时,例如共有3中货币1,2,3，$r_{1,2}=2,r_{2,3}=3,r_{1,3}=5$,$c_1=1,c_2=10$,当初始为1号货币为d=2时，直接兑换为三号货币结果为9，兑换为2号货币再兑换为3号货币为2，所以此时不具有最优子结构，原因是随着交易次数增加费用增加。
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 15.4-3]
+Give a memoized version of LCS-LENGTH that runs in O(mn) time.
+\end{problem}
+
+\begin{solution}
+m=X.length\\
+n=Y.length\\
+c[i,j]=-1;\\
+LCS-LENGTH(m,n)\\
+\hspace*{0.6 cm} if m=0||n=0\\
+\hspace*{1.6 cm}     return 0;\\
+\hspace*{0.6 cm} if c[m,n] $\geqslant$ 0\\
+\hspace*{1.6 cm}      return c[m,n];\\
+\hspace*{0.6 cm} if $x_m=y_n$\\
+\hspace*{1.6 cm}      c[m,n]=LCS-LENGTH(m-1,n-1)+1\\
+\hspace*{1.6 cm}      b[m,n]=$\nwarrow$\\
+\hspace*{0.6 cm} else\\
+\hspace*{1.6 cm}      p=LCS-LENGTH(m,n-1); q=LCS-LENGTH(m-1,n)\\
+\hspace*{1.6 cm}      c[m,n]=max(p,q)\\
+\hspace*{1.6 cm}      b[m,n]=p>q?$\leftarrow$:$\uparrow$\\
+\hspace*{0.6 cm} return c[m,n];
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 15.4-5]
+Give an $O(n^2)$-time algorithm to find the longest monotonically increasing subsequence of a sequence of n numbers.
+\end{problem}
+
+\begin{solution}
+A:输入的序列；\\
+s[i]:以A[i]结尾的A中前i项的最大单调递增子序列。\\
+初始化都为0\\
+subsequence(x)\\
+\hspace*{0.6 cm} for i=2 to n\\
+\hspace*{1.2 cm}     for j=1 to i-1\\
+\hspace*{1.8 cm}        if A[i] > A[j]\\
+\hspace*{2.4 cm}            s[i]=max(s[i],s[j]+1)\\
+output\\
+\hspace*{0.6 cm} 找到s中的最大值s[k]，记temp=s[k]\\
+\hspace*{0.6 cm} while(temp > 0)\\
+\hspace*{1.2 cm}    b[s[k]]=A[k]\\
+\hspace*{1.2 cm}    temp=temp-1;\\
+\hspace*{1.2 cm}    while(k > 1)\\
+\hspace*{1.8 cm}        k--;\\
+\hspace*{1.8 cm}        if s[k]==temp \&\& A[k] < b[s[k+1]]\\
+\hspace*{2.4 cm}               break;\\
+b数组中的1-s[k]的值即为最大单调子序列。
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 15.5-1]
+Write  pseudocode  for  the  procedure  CONSTRUCT-OPTIMAL-BST(root)which,given the table root, outputs the structure of an optimal binary search tree. For the example in Figure 15.10, your procedure should print out the structure corresponding to the optimal binary search tree shown in Figure 15.9(b). \\
+
+\end{problem}
+
+\begin{solution}
+output $k_{root[1,n]}$ is the root\\
+construct(i,j)\\
+\hspace*{0.6 cm} if i==j\\
+\hspace*{1.2 cm}    output $d_{i-1}$is the left son of $k_i$, $d_i$is the right son of $k_i$;return\\
+\hspace*{0.6 cm} if root[i,j]==i\\
+\hspace*{1.2 cm}    output $d_{i-1}$ is the left son of $k_i$;return\\
+\hspace*{0.6 cm} if root[i,j]==j\\
+\hspace*{1.2 cm}    output $d_j$ is the right son of $k_j$;return\\
+\hspace*{0.6 cm} output $d_{root[i,root[i,j]-1]}$ is the left son of $k_{root[i,j]}$\\
+\hspace*{0.6 cm} output $d_{root[root[i,j]+1],j]}$ is the right son of $k_{root[i,j]}$\\
+\hspace*{0.6 cm} construct(i,root[i,j]-1);\\
+\hspace*{0.6 cm} construct(root[i,j]+1,j);\\
+
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+\beginoptional
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC Problem 15-4: Printing neatly]
+\end{problem}
+
+\begin{solution}
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+\beginot
+%%%%%%%%%%%%%%%
+\begin{ot}[通信系统]
+	某个通信系统由n个设备串联构成，每个设备可能有多个厂商生产，均有带宽和价格参数。系统的总带宽决定于某个设备的最小带宽，总价格是各个设备的价格总和。请你设计一个算法，以``带宽/造价''为最优目标，确定该通信系统的构成
+	
+	请按照``最优子结构确定、确定递归表达式、非递归实现''步骤完成设计和讲解.	
+\end{ot}
+
+% \begin{solution}
+% \end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{ot}[TC Problem 15-3: Bitonic euclidean traveling-salesman problem]
+\end{ot}
+
+% \begin{solution}
+% \end{solution}
+%%%%%%%%%%%%%%%
+
+
+% \vspace{0.50cm}
+%%%%%%%%%%%%%%%
+% \begin{ot}[]
+% 
+%   \noindent 参考资料:
+%   \begin{itemize}
+%     \item 
+%   \end{itemize}
+% \end{ot}
+
+% \begin{solution}
+% \end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+% 如果没有需要订正的题目，可以把这部分删掉
+
+% \begincorrection
+%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+% 如果没有反馈，可以把这部分删掉
+\beginfb
+
+% 你可以写
+% ~\footnote{优先推荐 \href{problemoverflow.top}{ProblemOverflow}}：
+% \begin{itemize}
+%   \item 对课程及教师的建议与意见
+%   \item 教材中不理解的内容
+%   \item 希望深入了解的内容
+%   \item $\cdots$
+% \end{itemize}
+%%%%%%%%%%%%%%%%%%%%
+% \bibliography{2-5-solving-recurrence}
+% \bibliographystyle{plainnat}
+%%%%%%%%%%%%%%%%%%%%
+\end{document}

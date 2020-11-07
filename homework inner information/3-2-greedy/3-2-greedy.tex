@@ -1,0 +1,238 @@
+% 2-15-rb-tree.tex
+
+%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper, justified]{tufte-handout}
+
+\input{hw-preamble} % feel free to modify this file
+%%%%%%%%%%%%%%%%%%%%
+\title{第3-2讲: 贪心}
+\me{赵超懿}{191870271}{}{}
+\date{\zhtoday} % or like 2019年9月13日
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism % always keep this line
+%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+  % \begin{center}{\fcolorbox{blue}{yellow!60}{\parbox{0.65\textwidth}{\large 
+  %   \begin{itemize}
+  %     \item 
+  %   \end{itemize}}}}
+  % \end{center}
+\end{abstract}
+%%%%%%%%%%%%%%%%%%%%
+\beginrequired
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 16.1-2]
+Suppose that instead of always selecting the first activity to finish, we instead select
+the last activity to start that is compatible with all previously selected activities. Describe how this approach is a greedy algorithm, and prove that it yields an optimal
+solution.
+\end{problem}
+
+\begin{solution}
+首先，按照开始时间的循序排序（从小到大）\\
+证明：对于非空子问题$S_k$，令$a_m$是$S_k$中开始时间最晚的活动，则$a_m$在$S_k$的某个最大兼容活动子集中。\\
+设$a_j$是$A_k$（$A_k$是$S_k$的最大兼容活动子集）中开始最晚的活动，若j=m，则证明，若$j\neq m$则选择开展$a_j$而不是$a_m$，（活动时间不会发生冲突）这时新的最大兼容活动子集与原来一样大，故$a_m$在$S_k$的某个最大兼容活动子集中。
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 16.1-3]
+Not just any greedy approach to the activity-selection problem produces a maximum-size set of mutually compatible activities. Give an example to show that
+the approach of selecting the activity of least duration from among those that are
+compatible with previously selected activities does not work. Do the same for
+the approaches of always selecting the compatible activity that overlaps the fewest
+other remaining activities and always selecting the compatible remaining activity
+with the earliest start time.
+
+\end{problem}
+
+\begin{solution}
+例子：\\
+1.时间0-7，以下分别对应事件1、2、3、4，该情况下最优解为选择事件1和4\\
+$s_i$（事件开始时间）0 2 3 4\\
+$f_i$（事件开始时间）4 5 5 7\\
+当选择持续时间最短的事件,选择事件3，只能进行一个活动，不是最优解\\
+2. 时间0-8，以下分别对应事件1、2、3、4，该情况下最优解为选择事件1、3\\
+$s_i$（事件开始时间）0 3 4 0\\
+$f_i$（事件开始时间）4 5 8 8\\
+当选择与其他剩余活动重叠最少者：先选择事件3，不是最优解。\\
+3. 时间0-7，以下分别对应事件1、2、3，该情况下最优解为选择事件2和3\\
+$s_i$（事件开始时间）0 2 5\\
+$f_i$（事件开始时间）7 5 7\\
+当选择最早开始的事件,选择事件1，只能进行一个活动，不是最优解\\
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 16.2-1]
+Prove that the fractional knapsack problem has the greedy-choice property.
+\end{problem}
+
+\begin{solution}
+首先，问题一定有最优解。对物体按从高到低按单位价值排列，标记序号1,2，，，n\\
+设装背包时是把要装的物体按单位价值从高到低装进背包，记物体的序号为$1,2,,,,k$\\
+记$s_i$是把前i的物品装进背包的方案或把背包装满，若最优解在标号j个物品时（即没装物品中单位价值最高的）没有装，或没有装完（背包还没满），则将后面的装的物品换成标号为j的物体装进去，总价值高于原方案，故标号为j的物品一定在最优解中，故具有贪心选择性质。
+
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 16.2-2]
+Give a dynamic-programming solution to the 0-1 knapsack problem that runs in O(nW) time, where n is the number of items and W is the maximum weight of
+items that the thief can put in his knapsack.
+
+\end{problem}
+
+\begin{solution}
+记v[i][j]为背包容量为j时，在前i个物品中选择装物体的价值最大值，初始化为0，s数组用来记录装的方案\\
+0-1-knapack-problem\\
+\hspace*{0.6 cm} for i = 1 to n\\
+\hspace*{1.2 cm}   for j = 1 to W\\
+\hspace*{1.8 cm}      if j >= w[i]\\
+\hspace*{2.4 cm}         v[i][j]=v[i-1][j-w[i]];\\
+\hspace*{2.4 cm}         s[i][j]=i;\\
+\hspace*{0.6 cm} return v[n][W] and s；\\
+\\
+print(s,i,j)\\
+\hspace*{0.6 cm} if i == 0   \\
+\hspace*{1.2 cm}   return;\\
+\hspace*{0.6 cm} output i;\\
+\hspace*{0.6 cm} print(s,s[i][j]-1,j-w[i]);\\
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 16.3-2]
+
+\end{problem}
+
+\begin{solution}
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 16.3-5]
+\end{problem}
+
+\begin{solution}
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 16.3-8]
+\end{problem}
+
+\begin{solution}
+\end{solution}
+%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 17.1-3]
+\end{problem}
+
+\begin{solution}
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 17.2-2]
+\end{problem}
+
+\begin{solution}
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC 17.4-1]
+\end{problem}
+
+\begin{solution}
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+\beginoptional
+
+%%%%%%%%%%%%%%%
+\begin{problem}[TC Problem 16-1 (Coin Changing)]
+\end{problem}
+
+\begin{solution}
+\end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+\beginot
+%%%%%%%%%%%%%%%
+\begin{ot}[Ternary Disk]
+	Trimedia Disks Inc. has developed ``ternary'' hard disks. 
+	Each cell on a disk can now store values 0, 1, or 2 (instead of just 0 or 1). 
+	
+	To take advantage of this new technology, provide a modified Huffman
+	algorithm for constructing an optimal variable-length prefix-free code for characters from an alphabet of size n, where the characters occur with known frequencies $f_1, f_2, \cdots , f_n$. 
+	
+	Prove that your algorithm is correct.
+\end{ot}
+
+% \begin{solution}
+% \end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+\begin{ot}[Intervals]
+	
+	Let $X$ be a set of $n$ intervals on the real line. 
+	A subset of intervals $Y\subseteq X$ is called a \textit{\textbf{full path}} if the intervals in $Y$ cover the intervals in $X$, that is, any real value that is contained in some interval in $X$ is also contained in some interval in $Y$ . The \textit{size} of the full path is the number of intervals it contains.
+	
+	\mfigcap{width = 1.00\textwidth,height=1.5cm}{figs/intervals.png}{蓝色的7个区间组成一个完整路径(full path)}
+	
+	Describe and analyze a greedy algorithm to compute the smallest full path of $X$ as quickly as possible. 
+	Assume that your input consists of two arrays $X_L \left[1..n\right]$ and $X_R \left[1..n\right]$, representing the left and right endpoints of the intervals in $X$. Don't forget to prove your greedy algorithm is correct!
+\end{ot}
+
+% \begin{solution}
+% \end{solution}
+%%%%%%%%%%%%%%%
+
+
+% \vspace{0.50cm}
+%%%%%%%%%%%%%%%
+% \begin{ot}[]
+% 
+%   \noindent 参考资料:
+%   \begin{itemize}
+%     \item 
+%   \end{itemize}
+% \end{ot}
+
+% \begin{solution}
+% \end{solution}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+% 如果没有需要订正的题目，可以把这部分删掉
+
+% \begincorrection
+%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+% 如果没有反馈，可以把这部分删掉
+\beginfb
+
+% 你可以写
+% ~\footnote{优先推荐 \href{problemoverflow.top}{ProblemOverflow}}：
+% \begin{itemize}
+%   \item 对课程及教师的建议与意见
+%   \item 教材中不理解的内容
+%   \item 希望深入了解的内容
+%   \item $\cdots$
+% \end{itemize}
+%%%%%%%%%%%%%%%%%%%%
+% \bibliography{2-5-solving-recurrence}
+% \bibliographystyle{plainnat}
+%%%%%%%%%%%%%%%%%%%%
+\end{document}
